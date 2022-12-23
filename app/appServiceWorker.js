@@ -1,4 +1,4 @@
-const CACHE_VER = 001;
+const CACHE_VER = 101;
 const CACHE_PREFIX = "misophonia-mask-v";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VER;
 

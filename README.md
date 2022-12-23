@@ -37,7 +37,7 @@ You can also use the app to play masking background noise generally when in an e
 Each noise colour varies in how loud some pitch ranges (frequencies) within the noise are. For some colours, lower frequencies may be louder, and for others, higher frequencies. The list below describes each button colour in the order it appears:
 
 **Black (silence)**  
-The black button stops playing noise.
+The black button with the muted speaker icon stops playing noise.
 
 **White (1)**  
 White noise contains equal *energy* at all frequencies. However, because human hearing is more sensitive to some frequencies than others, some frequencies will be *perceived* as being louder than others.
@@ -59,6 +59,14 @@ Blue noise is roughly the high frequency counterpart of pink noise. Instead of g
 
 **Purple (7)**  
 Purple, or violet, noise is progressively louder at higher pitches (by 6&nbsp;dB per octave, like a reverse red noise). It sounds harsher than other colours, and is comparable to the hiss of a spray can.
+
+**Black (custom)**
+The black button with the slider icon allows you to customize which which frequency ranges are emphasized.
+Choosing it will play white noise, but also display a set of sliders.
+Each slider covers a different frequency range, from lowest (at the top) to highest (at the bottom).
+When the slider knob for a range is in the middle, that frequency plays at standard volume.
+Move the knob left to make those frequencies quieter; to the right to make them louder.
+Choosing **Reset** will reset all the sliders to the middle position.
 
 ### What colour should I use?
 The colour that works best for a given listener or trigger may vary, so you should experiment. That said, a good place to start is often red (3), pink (4), or green (5). Red noise is often used for relaxation or to help fall asleep, and there are anecdotal reports that it may also work well to block many trigger sounds. Pink noise may work better when using a small speaker rather than headphones. Pink and green noise are similar, but you may find you prefer one over the other.
