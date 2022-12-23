@@ -155,7 +155,16 @@ async function playAudio(i) {
     }
 }
 
-// compatibility check: stops script with an error message on failure
+// handle opening/closing the About text block
+const aboutText = document.querySelector("about-text");
+document.querySelector("footer > a").addEventListener("click", (ev) => {
+    ev.preventDefault();
+    aboutText.classList.toggle("open");
+});
+document.querySelector("hero-icon").addEventListener("click", (ev) => aboutText.classList.remove("open"));
+
+// compatibility check:
+// an incompatible browser will stop app startup and show an error message
 try {
     if (!window.AudioContext) {
         throw new Error();
@@ -172,7 +181,11 @@ try {
     }
     console.log(`Web Audio detected; using ${audioFormat} audio`);
 } catch (ex) {
-    alert(`Your browser is missing required features:\nWeb Audio support for one of: ${CLIP_FORMATS.join(", ")}.`);
+    alert([
+        "Sorry, but the Miso Mask app won't work in this browser.",
+        `Web Audio support for one of ${CLIP_FORMATS.join(", ")} is required.`,
+        'Choose the "About this app" link for more information.'
+    ].join("\n"));
     throw new Error("app not supported");
 }
 
@@ -211,14 +224,6 @@ blackBtn.innerHTML = `<svg viewBox="0 0 24 24">
                        11S19.41 9.72 19.86 8H22V6H19.86M16 9C14.9 9 14 8.1 14 7C14 5.9 14.9
                        5 16 5S18 5.9 18 7C18 8.1 17.1 9 16 9Z"/>
 </svg>`;
-
-// handle opening/closing the About text block
-const aboutText = document.querySelector("about-text");
-document.querySelector("footer > a").addEventListener("click", (ev) => {
-    ev.preventDefault();
-    aboutText.classList.toggle("open");
-});
-document.querySelector("hero-icon").addEventListener("click", (ev) => aboutText.classList.remove("open"));
 
 // create the equalizer controls
 const eqControls = document.querySelector("custom-eq");
