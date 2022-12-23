@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Misophonia Mask</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="An installable web app that plays colours of noise to mask misophonia triggers." />
+        <link rel="stylesheet" href="index.css" />
+        <link rel="manifest" href="manifest.json" />
+        <link rel="icon" type="image/png" sizes="16x16" href="icons/16.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="icons/32.png" />
+        <link rel="icon" type="image/png" sizes="48x48" href="icons/48.png" />
+        <link rel="icon" type="image/png" sizes="72x72" href="icons/72.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="icons/96.png" />
+        <link rel="icon" type="image/png" sizes="128x128" href="icons/128.png">
+        <link rel="icon" type="image/png" sizes="144x144" href="icons/144.png" />
+        <link rel="icon" type="image/png" sizes="152x152" href="icons/152.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="icons/192.png" />
+        <link rel="icon" type="image/png" sizes="384x384" href="icons/384.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="icons/512.png" />
+        <meta rel="apple-touch-icon" href="icons/72.png" />
+        <meta rel="apple-touch-icon" href="icons/96.png" />
+        <meta rel="apple-touch-icon" href="icons/128.png" />
+        <meta rel="apple-touch-icon" href="icons/144.png" />
+        <meta rel="apple-touch-icon" href="icons/152.png" />
+        <meta rel="apple-touch-icon" href="icons/192.png" />
+        <meta rel="apple-touch-icon" href="icons/384.png" />
+        <meta rel="apple-touch-icon" href="icons/512.png" />
+    </head>
+    <body>
+        <hero-icon><about-text>
+            <h1>Misophonia Mask</h1>
+            <p>
+                This app uses noise to help mask out other sound.
+                It is meant for people with misophonia,
+                but can be used by anyone who needs to focus
+                or relax in a noisy environment.
+            </p>
+            <p>
+                Headphones or ear buds will work better than using a regular speaker.
+                For best results, use headphones with active noise cancelling technology.
+            </p>
+            <p>
+                Different button colours produce different kinds of noise.
+                Each colour masks certain frequencies (pitches) more strongly than others.
+                Some colours may work better in certain situations or for certain people,
+                but a good place to start is with red (3), pink (4), or green (5).
+            </p>
+            <p>
+                If your browser supports installable Web apps (Safari doesn’t),
+                you can <a href="#!" onclick="installWebApp()">install this page as an app</a> on your device.
+                As an app, it works even if you are offline.
+            </p>
+            <p>
+                Made (with ❤️ and a little ☕) by <a href="https://cgjennings.ca/contact/">Christopher Jennings</a>.
+                Source code, full credits, and more information are
+                <a href="https://github.com/CGJennings/misophonia-masking-app/">available on GitHub</a>.
+            </p>
+        </about-text></hero-icon>
+        <audio-controls></audio-controls>
+        <footer><a draggable="false" href="#!" class="">About this app</a></footer>
+        <install-button title="Install Misophonia Mask"><svg viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 2C17.5 2 22 6.5 22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 6.5 2 12 2M8 17H16V15H8V17M16 10H13.5V6H10.5V10H8L12 14L16 10Z" />
+        </svg></install-button>
+        <script src="index.js"></script>
+    </body>
+</html>
