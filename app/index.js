@@ -1,3 +1,15 @@
+/**
+ * Available audio file formats in order of preference.
+ * The first format that the browser says is can support will be used.
+ * Matching audio clips must be available in `clips/`.
+*/
+const CLIP_FORMATS = [
+    // !! must be mirrored in the service worker for offline use to work
+    "ogg",
+    "mp3"
+];
+
+/** List of noise colour names; also the base file names for audio clips. */
 const NOISE_TYPES = [
     "black",
     "white",
@@ -10,20 +22,20 @@ const NOISE_TYPES = [
     "custom"
 ];
 
+/** The `NOISE_TYPES` index that stops sound instead of playing it. */
 const TYPE_SILENCE = 0;
-const TYPE_WHITE = 1;
+/** The `NOISE_TYPES` index of the custom audio option. */
 const TYPE_CUSTOM = NOISE_TYPES.length - 1;
+/** The `NOISE_TYPES` index of the base sound for the custom audio option. */
+const TYPE_CUSTOM_BASE_TYPE = 1;
 
-// file extension of a supported audio format
-let audioFormat = "ogg";
-
-// the WebAudio context (created on first user gesture)
+/** The Web Audio context; created on first use. */
 let audioCtx = null;
-
-// tracks the currently playing audio source, if any
+/** File extension of the `CLIP_FORMAT` to use for the preferred audio format. */
+let audioFormat = null;
+/** Tracks the currently playing audio source, if any. */
 let source = null;
-
-// cache of decoded audio samples for each type of noise, or null
+/** Cache of decoded audio samples for each type of noise. */
 let buffers = new Array(NOISE_TYPES.length).fill(null);
 
 // equalizer config for custom audio option
@@ -39,7 +51,8 @@ let eqFilters = null;
  * Create filters that will apply custom audio equalizer settings.
  * The filter nodes will chain to each other as their destination,
  * with the first connected to the default audio context destination.
- * To apply the effect, connect the audio source to the last filter element.
+ * To apply the effect, connect the audio clip source to the last
+ * filter element in the chain (array).
  */
 function createEqualizerFilters() {
     if (eqFilters != null) {
@@ -61,21 +74,14 @@ function createEqualizerFilters() {
     eqFilters[EQ_NUM_BANDS-1].type = "highshelf";
 }
 
+/**
+ * Removes the custom audio filters from the audio graph.
+ * Safe to call even if the filters have not currently in use.
+ */
 function destroyEqualizerFilters() {
     if (eqFilters == null) return;
     eqFilters.forEach(f => f.disconnect());
     eqFilters = null;
-}
-
-
-/**
- * Informs the user of a network issue and resets the selected
- * sound so that they can try again later.
- */
-function handleNetworkError() {
-    // reset selected sound to "silence"
-    document.querySelector("audio-controls").firstChild.click();
-    alert("A network problem prevented the sound from playing.\nCheck your connection and try again.");
 }
 
 /**
@@ -124,7 +130,7 @@ async function playAudio(i) {
         let dest = audioCtx.destination;
         if (i == TYPE_CUSTOM) {
             // custom plays white noise, but applies a user controlled equalizer
-            i = TYPE_WHITE;
+            i = TYPE_CUSTOM_BASE_TYPE;
             createEqualizerFilters();
             dest = eqFilters[eqFilters.length - 1];
             document.querySelector("custom-eq").classList.add("open");
@@ -134,7 +140,8 @@ async function playAudio(i) {
         if (buffers[i] == null) {
             buffers[i] = await loadAudio(`clips/${NOISE_TYPES[i]}.${audioFormat}`);
             if (buffers[i] == null) {
-                handleNetworkError();
+                playAudio(TYPE_SILENCE);
+                alert("A network problem kept the sound from playing.\nCheck your connection and try again.");
                 return;
             }
         }
@@ -153,16 +160,19 @@ try {
     if (!window.AudioContext) {
         throw new Error();
     }
-    let a = document.createElement("audio");
-    if (a.canPlayType("audio/ogg").length === 0) {
-        if (a.canPlayType("audio/mp3").length === 0) {
-            throw new Error();
+    let audioEl = document.createElement("audio");
+    for (let format of CLIP_FORMATS) {
+        if (audioEl.canPlayType(`audio/${format}`).length > 0) {
+            audioFormat = format;
+            break;
         }
-        audioFormat = "mp3";
+    }
+    if (audioFormat == null) {
+        throw new Error();
     }
     console.log(`Web Audio detected; using ${audioFormat} audio`);
 } catch (ex) {
-    alert("Your browser is missing required features:\nWeb Audio with ogg or mp3 support.");
+    alert(`Your browser is missing required features:\nWeb Audio support for one of: ${CLIP_FORMATS.join(", ")}.`);
     throw new Error("app not supported");
 }
 

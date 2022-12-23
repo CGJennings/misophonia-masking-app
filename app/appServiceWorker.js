@@ -2,27 +2,31 @@ const CACHE_VER = 102;
 const CACHE_PREFIX = "misophonia-mask-v";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VER;
 
+// supported clip formats (see index.js)
+const CLIP_FORMATS = [
+  "ogg",
+  "mp3",
+]
+
+// files to be cached for offline use
 const ASSETS = [
     "./",
     "./index.html",
     "./index.css",
     "./index.js",
     "./icon.svg",
-    "./clips/white.ogg",
-    "./clips/grey.ogg",
-    "./clips/red.ogg",
-    "./clips/pink.ogg",
-    "./clips/green.ogg",
-    "./clips/blue.ogg",
-    "./clips/purple.ogg",
-    "./clips/white.mp3",
-    "./clips/grey.mp3",
-    "./clips/red.mp3",
-    "./clips/pink.mp3",
-    "./clips/green.mp3",
-    "./clips/blue.mp3",
-    "./clips/purple.mp3",    
 ];
+// add all audio clip files as assets
+[
+  "white",
+  "grey",
+  "red",
+  "pink",
+  "green",
+  "blue",
+  "purple",
+].forEach((base) => CLIP_FORMATS.forEach((ext) => ASSETS.push(`./clips/${base}.${ext}`)));
+
 
 // create current cache the first time this version is loaded
 self.addEventListener("install", (ev) => {
