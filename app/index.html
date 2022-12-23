@@ -28,7 +28,16 @@
         <meta rel="apple-touch-icon" href="icons/512.png" />
     </head>
     <body>
-        <hero-icon><about-text>
+        <datalist id="db-ticks">
+            <option value="-24"></option>
+            <option value="-12"></option>
+            <option value="0"></option>
+            <option value="12"></option>
+            <option value="24"></option>
+        </datalist>
+        <hero-icon>
+            <custom-eq></custom-eq>
+            <about-text>
             <h1>Misophonia Mask</h1>
             <p>
                 This app uses noise to help mask out other sound.
@@ -45,6 +54,8 @@
                 Each colour masks certain frequencies (pitches) more strongly than others.
                 Some colours may work better in certain situations or for certain people,
                 but a good place to start is with red (3), pink (4), or green (5).
+                The black custom setting button lets you choose how strongly to mask each
+                frequency band.
             </p>
             <p>
                 If your browser supports installable Web apps (Safari doesn’t),

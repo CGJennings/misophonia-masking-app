@@ -69,6 +69,35 @@ p {
     margin: 1.5rem 0;
 }
 
+custom-eq {
+    display: none;
+    flex-direction: column;
+    flex-shrink: 0;
+    justify-content: center;
+    overflow-y: auto;
+
+    background: var(--bg-transparent);
+    padding: 1rem 3rem;
+}
+custom-eq.open {
+    display: flex;
+}
+eq-band {
+    display: flex;
+    align-items: center;
+    font-size: 0.89rem;
+}
+eq-band:first-of-type, eq-band:last-of-type {
+    display: none;
+}
+eq-band > input {
+    max-width: 6rem;
+    min-width: 3rem;
+    padding: 0.25rem 0;
+    margin-inline-end: 0.5rem;
+    height: 1rem;
+}
+
 audio-controls {
     display: flex;
     margin: 1rem 0;
@@ -101,6 +130,9 @@ audio-controls > button:nth-child(7) {
 }
 audio-controls > button:nth-child(8) {
     background-color: #6a1b9a;
+}
+audio-controls > button:nth-child(9) {
+    background-color: #000;
 }
 button {
     appearance: none;
@@ -165,9 +197,16 @@ install-button > svg {
     height: 2rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 650px) {
     button {
         font-size: 0.8rem;
+    }
+    about-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
     }
 }
 
