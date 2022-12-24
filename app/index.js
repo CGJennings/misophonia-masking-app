@@ -11,7 +11,7 @@ const CLIP_FORMATS = [
 
 /** List of noise colour names; also the base file names for audio clips. */
 const NOISE_TYPES = [
-    "black",
+    "silence",
     "white",
     "grey",
     "red",
@@ -27,7 +27,7 @@ const TYPE_SILENCE = 0;
 /** The `NOISE_TYPES` index of the custom audio option. */
 const TYPE_CUSTOM = NOISE_TYPES.length - 1;
 /** The `NOISE_TYPES` index of the base sound for the custom audio option. */
-const TYPE_CUSTOM_BASE_TYPE = 1;
+const TYPE_CUSTOM_BASE_NOISE = 1;
 
 /** The Web Audio context; created on first use. */
 let audioCtx = null;
@@ -38,51 +38,6 @@ let source = null;
 /** Cache of decoded audio samples for each type of noise. */
 let buffers = new Array(NOISE_TYPES.length).fill(null);
 
-// equalizer config for custom audio option
-const EQ_NUM_BANDS = 10;
-const EQ_Q = Math.SQRT2;
-const EQ_MIN_DB = -24;
-const EQ_MAX_DB = 24;
-let eqVals = new Array(EQ_NUM_BANDS).fill(0);
-let eqBands = eqVals.map((e, i) => 31.25 * 2 ** i);
-let eqFilters = null;
-
-/**
- * Create filters that will apply custom audio equalizer settings.
- * The filter nodes will chain to each other as their destination,
- * with the first connected to the default audio context destination.
- * To apply the effect, connect the audio clip source to the last
- * filter element in the chain (array).
- */
-function createEqualizerFilters() {
-    if (eqFilters != null) {
-        destroyEqualizerFilters();
-    }
-    let prevNode = audioCtx.destination;
-    eqFilters = new Array(EQ_NUM_BANDS);
-    for (let i=0; i<EQ_NUM_BANDS; ++i) {
-        const f = audioCtx.createBiquadFilter();
-        f.frequency.value = eqBands[i];
-        f.Q.value = EQ_Q;
-        f.gain.value = eqVals[i];
-        f.type = "peaking";
-        f.connect(prevNode);
-        prevNode = f;
-        eqFilters[i] = f;
-    }
-    eqFilters[0].type = "lowshelf";
-    eqFilters[EQ_NUM_BANDS-1].type = "highshelf";
-}
-
-/**
- * Removes the custom audio filters from the audio graph.
- * Safe to call even if the filters have not currently in use.
- */
-function destroyEqualizerFilters() {
-    if (eqFilters == null) return;
-    eqFilters.forEach(f => f.disconnect());
-    eqFilters = null;
-}
 
 /**
  * Loads an audio clip, returning a promise that resolves to
@@ -123,14 +78,14 @@ async function playAudio(i) {
         document.querySelector("custom-eq").classList.remove("open");
     }
 
-    // if type is other than black (silence), start playing that type of noise
+    // start playing the new noise type, if any
     if (i !== TYPE_SILENCE) {
         // destination for the audio data; normally the default output (speakers),
         // but will be the head of the eq filter chain if using the custom option
         let dest = audioCtx.destination;
         if (i == TYPE_CUSTOM) {
-            // custom plays white noise, but applies a user controlled equalizer
-            i = TYPE_CUSTOM_BASE_TYPE;
+            // custom plays white noise, but applies a user-controlled equalizer
+            i = TYPE_CUSTOM_BASE_NOISE;
             createEqualizerFilters();
             dest = eqFilters[eqFilters.length - 1];
             document.querySelector("custom-eq").classList.add("open");
@@ -163,13 +118,13 @@ document.querySelector("footer > a").addEventListener("click", (ev) => {
 });
 document.querySelector("hero-icon").addEventListener("click", (ev) => aboutText.classList.remove("open"));
 
-// compatibility check:
+// Compatibility check:
 // an incompatible browser will stop app startup and show an error message
 try {
     if (!window.AudioContext) {
         throw new Error();
     }
-    let audioEl = document.createElement("audio");
+    const audioEl = document.createElement("audio");
     for (let format of CLIP_FORMATS) {
         if (audioEl.canPlayType(`audio/${format}`).length > 0) {
             audioFormat = format;
@@ -189,10 +144,8 @@ try {
     throw new Error("app not supported");
 }
 
-// container to hold the audio buttons
-let audioControlEl = document.querySelector("audio-controls");
-
 // create a button for each noise type
+let audioControlEl = document.querySelector("audio-controls");
 for (let i=0; i<NOISE_TYPES.length; ++i) {
     let btn = document.createElement("button");
     btn.innerText = String(i);
@@ -205,15 +158,61 @@ for (let i=0; i<NOISE_TYPES.length; ++i) {
     audioControlEl.appendChild(btn);
 }
 
-// extra setup for the "Silence" and "Custom" buttons
-let blackBtn = audioControlEl.firstChild;
-blackBtn.classList.add("active");
-blackBtn.setAttribute("aria-label", "silence");
-blackBtn.innerText = "";
+// extra setup for the "Silence" option
+audioControlEl.firstChild.classList.add("active");
+audioControlEl.firstChild.innerText = "";
 
-blackBtn = audioControlEl.lastChild;
-blackBtn.setAttribute("aria-label", "custom noise");
-blackBtn.innerText = "";
+// extra setup for the "Custom" option and its filter controls
+const EQ_NUM_BANDS = 10;
+const EQ_Q = Math.SQRT2;
+const EQ_MIN_DB = -24;
+const EQ_MAX_DB = 24;
+const EQ_BANDS = new Array(EQ_NUM_BANDS).fill(0).map((e, i) => 31.25 * 2**i);
+let eqFilters = null;
+let eqVals = new Array(EQ_NUM_BANDS).fill(0);
+audioControlEl.lastChild.innerText = "";
+
+/**
+ * Create filters that will apply custom audio equalizer settings.
+ * The filter nodes will chain to each other as their destination,
+ * with the first connected to the default audio context destination.
+ * To apply the effect, connect the audio clip source to the last
+ * filter element in the chain (array).
+ */
+function createEqualizerFilters() {
+    if (eqFilters != null) {
+        destroyEqualizerFilters();
+    }
+    let prevNode = audioCtx.destination;
+    eqFilters = new Array(EQ_NUM_BANDS);
+    for (let i=0; i<EQ_NUM_BANDS; ++i) {
+        const f = audioCtx.createBiquadFilter();
+        f.frequency.value = EQ_BANDS[i];
+        f.Q.value = EQ_Q;
+        f.gain.value = eqVals[i];
+        f.type = "peaking";
+        f.connect(prevNode);
+        prevNode = f;
+        eqFilters[i] = f;
+    }
+    eqFilters[0].type = "lowshelf";
+    eqFilters[EQ_NUM_BANDS-1].type = "highshelf";
+}
+
+/**
+ * Removes the custom audio filters from the audio graph.
+ * Safe to call even if the filters have not currently in use.
+ */
+function destroyEqualizerFilters() {
+    if (eqFilters == null) return;
+    eqFilters.forEach(f => f.disconnect());
+    eqFilters = null;
+}
+
+/** Formats the dB adjustment readout of an equalizer band. */
+function formatBandValue(dbVal) {
+    return `${dbVal > 0 ? "+" : ""}${dbVal} dB`;
+}
 
 // create the equalizer controls
 const eqControls = document.querySelector("custom-eq");
@@ -224,13 +223,21 @@ for (let i=0; i<EQ_NUM_BANDS; ++i) {
         val = 0;
     }
     eqVals[i] = val;
-    let slider = document.createElement("input");
+
+    const bandLabel = document.createElement("label");
+    bandLabel.innerText = `${EQ_BANDS[i]} Hz`;
+    bandLabel.setAttribute("for", id);
+
+    const valueLabel = document.createElement("span");
+    valueLabel.innerText = formatBandValue(val);
+
+    const slider = document.createElement("input");
     slider.id = id;
     slider.type = "range";
     slider.value = val;
     slider.min = EQ_MIN_DB;
     slider.max = EQ_MAX_DB;
-    slider.setAttribute("list", "db-ticks");
+    slider.setAttribute("list", "dB-ticks");
     slider.addEventListener("input", ev => {
         const val = Number(slider.value);
         eqVals[i] = val;
@@ -238,15 +245,13 @@ for (let i=0; i<EQ_NUM_BANDS; ++i) {
         if (eqFilters != null) {
             eqFilters[i].gain.value = val;
         }
+        valueLabel.innerText = formatBandValue(val);
     });
 
-    const bandLabel = document.createElement("label");
-    bandLabel.innerText = ` ${eqBands[i]} Hz`;
-    bandLabel.setAttribute("for", id);
-
     let block = document.createElement("eq-band");
-    block.appendChild(slider);
     block.appendChild(bandLabel);
+    block.appendChild(slider);
+    block.appendChild(valueLabel);
     eqControls.appendChild(block);
 }
 
@@ -258,18 +263,18 @@ eqReset.addEventListener("click", ev => {
     ev.preventDefault();
     if (eqFilters != null) {
         for (let i=0; i<EQ_NUM_BANDS; ++i) {
-            document.getElementById(`custom${i}`).value = 0;
-            eqVals[i] = 0;
+            const slider = document.getElementById(`custom${i}`);
+            slider.value = 0;
+            slider.parentNode.lastChild.innerText = formatBandValue(0);
             eqFilters[i].gain.value = 0;
+            eqVals[i] = 0;
         }
     }
 });
 eqControls.appendChild(eqReset);
 
 
-//
 // Web app support
-//
 
 const installBtn = document.querySelector("install-button");
 let webAppInstaller = null;

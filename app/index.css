@@ -75,6 +75,7 @@ custom-eq {
     flex-shrink: 0;
     justify-content: center;
     overflow-y: auto;
+    font-size: 0.89rem;
 
     background: var(--bg-transparent);
     padding: 1rem 3rem;
@@ -82,19 +83,29 @@ custom-eq {
 custom-eq.open {
     display: flex;
 }
+custom-eq > a {
+    width: 100%;
+    text-align: center;
+}
 eq-band {
     display: flex;
     align-items: center;
-    font-size: 0.89rem;
 }
 eq-band:first-of-type, eq-band:last-of-type {
     display: none;
+}
+eq-band > label {
+    width: 7em;
+    text-align: end;
+}
+eq-band > span {
+    width: 6em;
 }
 eq-band > input {
     max-width: 6rem;
     min-width: 3rem;
     padding: 0.25rem 0;
-    margin-inline-end: 0.5rem;
+    margin: 0.25rem 0.5rem;
     height: 1rem;
 }
 
