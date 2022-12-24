@@ -72,12 +72,18 @@ Choosing **Reset** will reset all the sliders to the middle position.
 The colour that works best for a given listener or trigger may vary, so you should experiment. That said, a good place to start is often red (3), pink (4), or green (5). Red noise is often used for relaxation or to help fall asleep, and there are anecdotal reports that it may also work well to block many trigger sounds. Pink noise may work better when using a small speaker rather than headphones. Pink and green noise are similar, but you may find you prefer one over the other.
 
 ### How do I install it?
-To install Misophonia Mask as an app on your device, look for an icon in the upper-right corner of the page. In some browsers, this icon won't appear until you interact with the page at least once (just touch or click somewhere).
-If the icon does not appear, then either the app is already installed or else your browser does not support installing Web sites as apps (Safari, for example).
+To install Misophonia Mask as an app on your device, look for an icon in the upper-right corner of the page.
+In some browsers, this icon won't appear until you interact with the page at least once (just touch or click somewhere).
+If the icon does not appear, then either the app is already installed or else your browser does not support installing Web sites as apps.
+Note that on macOS (Mac desktops and notebooks), Safari does not support Web apps, but Chrome does.
+Safari does support installing Web apps on iOS (iPhones and iPads).
 
 You can also install the app by clicking on the "About this app" link, then the "install this page as an app" link.
 
-Once installed, your browser may display a message stating that it was "added to your home screen", but it may or may not be. But it will always be included in your device's app folder or library. For example: On Android, [you would swipe up from the home screen to get to the "All Apps" pages to find it](https://support.google.com/android/answer/9079646). On Windows, [you would find it in the Start menu (after choosing All Apps if required)](https://support.microsoft.com/en-us/windows/see-all-your-apps-in-windows-fde6f576-0fc0-0813-6b0d-d3ec1d244c50). On an iPhone, [you would swipe left past all your Home Screen pages to get to your App Library](https://support.apple.com/en-ca/guide/iphone/iph87abad19a/ios). From there you can always add it to your home screen, if applicable.
+Once installed, your browser may display a message stating that it was "added to your home screen".
+This message is sometimes misleading.
+It may or may not be added to your home screen, but it will be included in your device's apps.
+For example, the Start menu on Windows, the "All Apps" page on Android, or the App Library on iOS.
 
 **Note:** if your phone has antivirus software installed, you may get a notification about it having a "low reputation" or something similar.
 This just means that the app is installed on a relatively small number of devices.
@@ -86,14 +92,12 @@ It still runs under all of the security protections provided by your browser, an
 
 # "Building" from source
 This app is simple enough that there is no need for a build tool.
-It is written in plain, modern JavaScript, CSS, and HTML and should run in about 95% of installed browsers at the time this was written.
-You are free to add a build tool if you like, but for development it is sufficient to do something like the following (assumes you have Node.js installed):
+It is written in plain, modern JavaScript, CSS, and HTML and should run in about 90–95% of installed browsers at the time this was written.
+You are free to add a build tool if you like, but for development it is sufficient to do something like the following (assumes Node.js is installed):
 
 ```bash
 npx browser-sync app -w
 ```
-
-
 
 # Additional credits
 [Heroic cat image](https://www.freepik.com/free-vector/cute-cat-super-hero-cartoon-icon-illustration-animal-hero-icon-concept-isolated-flat-cartoon-style_13874643.htm)
