@@ -99,6 +99,11 @@ You are free to add a build tool if you like, but for development it is sufficie
 npx browser-sync app -w
 ```
 
+## Modifying the audio clips
+Editing and saving the contents of `app/clips/` directly will degrade the audio quality of the clips.
+Instead, source clips using the lossless WAV format are included in `clip_sources`.
+After modifying the source clips, run the included Node.js script `clip_sources/make-clips-from-sources.js` to generate clip files for the app automatically using `ffmpeg`.
+
 # Credits
 Web app made (with ❤️ and a little ☕) by [Christopher Jennings](https://cgjennings.ca/contact/).
 
