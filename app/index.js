@@ -165,8 +165,8 @@ audioControlEl.firstChild.innerText = "";
 // extra setup for the "Custom" option and its filter controls
 const EQ_NUM_BANDS = 10;
 const EQ_Q = Math.SQRT2;
-const EQ_MIN_DB = -24;
-const EQ_MAX_DB = 24;
+const EQ_MIN_DB = -48;
+const EQ_MAX_DB = 0;
 const EQ_BANDS = new Array(EQ_NUM_BANDS).fill(0).map((e, i) => 31.25 * 2**i);
 let eqFilters = null;
 let eqVals = new Array(EQ_NUM_BANDS).fill(0);
@@ -211,7 +211,7 @@ function destroyEqualizerFilters() {
 
 /** Formats the dB adjustment readout of an equalizer band. */
 function formatBandValue(dbVal) {
-    return `${dbVal > 0 ? "+" : ""}${dbVal} dB`;
+    return `${dbVal >= 0 ? "+" : ""}${dbVal} dB`;
 }
 
 // create the equalizer controls
@@ -234,9 +234,9 @@ for (let i=0; i<EQ_NUM_BANDS; ++i) {
     const slider = document.createElement("input");
     slider.id = id;
     slider.type = "range";
-    slider.value = val;
     slider.min = EQ_MIN_DB;
     slider.max = EQ_MAX_DB;
+    slider.value = val;
     slider.setAttribute("list", "dB-ticks");
     slider.addEventListener("input", ev => {
         const val = Number(slider.value);
@@ -255,23 +255,35 @@ for (let i=0; i<EQ_NUM_BANDS; ++i) {
     eqControls.appendChild(block);
 }
 
-let eqReset = document.createElement("a");
-eqReset.innerText = "Reset";
-eqReset.href = "#!";
-eqReset.draggable = false;
-eqReset.addEventListener("click", ev => {
-    ev.preventDefault();
-    if (eqFilters != null) {
-        for (let i=0; i<EQ_NUM_BANDS; ++i) {
-            const slider = document.getElementById(`custom${i}`);
-            slider.value = 0;
-            slider.parentNode.lastChild.innerText = formatBandValue(0);
-            eqFilters[i].gain.value = 0;
-            eqVals[i] = 0;
+/**
+ * Adds an extra control beneath the EQ bands that modifies the current
+ * settings using an arbitrary function when clicked. The function is
+ * passed the current band dB value and index, and returns the new dB
+ * value for that band.
+ */
+function addEqFeature(label, fn) {
+    let eqCtrl = document.createElement("a");
+    eqCtrl.innerText = label;
+    eqCtrl.href = "#!";
+    eqCtrl.draggable = false;
+    eqCtrl.addEventListener("click", ev => {
+        ev.preventDefault();
+        if (eqFilters != null) {
+            for (let i=0; i<EQ_NUM_BANDS; ++i) {
+                const newValue = Math.min(EQ_MAX_DB, Math.max(EQ_MIN_DB, fn(eqVals[i], i)));
+                const slider = document.getElementById(`custom${i}`);
+                slider.value = newValue;
+                slider.parentNode.lastChild.innerText = formatBandValue(newValue);
+                eqFilters[i].gain.value = newValue;
+                eqVals[i] = newValue;
+            }
         }
-    }
-});
-eqControls.appendChild(eqReset);
+    });
+    eqControls.appendChild(eqCtrl);
+}
+
+addEqFeature("White Noise", (dB, i) => 0);
+addEqFeature("Silence", (dB, i) => EQ_MIN_DB);
 
 
 // Web app support

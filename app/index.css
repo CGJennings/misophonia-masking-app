@@ -95,9 +95,6 @@ eq-band {
     display: flex;
     align-items: center;
 }
-eq-band:first-of-type, eq-band:last-of-type {
-    display: none;
-}
 eq-band > label {
     width: 7em;
     text-align: end;
