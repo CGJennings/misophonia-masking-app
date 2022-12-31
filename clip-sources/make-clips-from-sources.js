@@ -10,9 +10,18 @@ function outpath(wavfile, ext) {
     return path.join(DIR_SOURCE_CLIPS, "..", "app", "clips", `${name}.${ext}`);
 }
 
-function ffmpeg(...args) {
+function ffmpeg(infile, outfile) {
     try {
-        spawnSync("ffmpeg", args);
+        let po = spawnSync(
+            "ffmpeg", ["-v", "error", "-i", infile, "-map_metadata", "-1", "-y", outfile],
+            {
+                stdio: ["ignore", "ignore", "pipe"]
+            }
+        );
+        if (po.stderr && po.stderr.byteLength > 0) {
+            console.log(po.stderr.toString());
+        }
+        if (po.error) throw error;
     } catch (error) {
         console.log(`${error.status} ${error.message}\n${error.stderr.toString()}`);
         exit(1);
@@ -21,8 +30,8 @@ function ffmpeg(...args) {
 
 function convert(wavfile) {
     console.log(`converting ${wavfile}...`);
-    ffmpeg("-i", wavfile, outpath(wavfile, "ogg"));
-    ffmpeg("-i", wavfile, outpath(wavfile, "mp3"));
+    ffmpeg(wavfile, outpath(wavfile, "ogg"));
+    ffmpeg(wavfile, outpath(wavfile, "mp3"));
 }
 
 fs.readdirSync(DIR_SOURCE_CLIPS)
