@@ -55,18 +55,26 @@ Pink noise falls between white and red noise. Like red noise it gets quieter at 
 Green noise simulates the ambient background noise of nature without human-made sound sources. It is similar to pink noise.
 
 **Blue (6)**  
-Blue noise is roughly the high frequency counterpart of pink noise. Instead of getting quieter at higher pitches, it gets louder at high pitches, but not as as much louder as purple noise. The sound is comparable to heavy rain.
+Blue noise is roughly the high frequency counterpart of pink noise.
+Instead of getting quieter at higher pitches, it gets louder at high pitches, but not as as much louder as purple noise.
+The sound is comparable to heavy rain.
 
 **Purple (7)**  
-Purple, or violet, noise is progressively louder at higher pitches. It sounds harsher than other colours, and is comparable to the hiss of a spray can.
+Purple, or violet, noise is progressively louder at higher pitches.
+It sounds harsher than other colours, and is comparable to the hiss of a spray can.
 
 **Black (custom)**
 The black button with the slider icon allows you to customize which frequency ranges are emphasized.
 Choosing it will play white noise, but also display a set of sliders.
-Each slider covers a different frequency range, from lowest (at the top) to highest (at the bottom).
-When the slider knob for a range is in the middle, that frequency plays at standard volume.
-Move the knob left to make those frequencies quieter; to the right to make them louder.
-Choosing **Reset** will reset all the sliders to the middle position.
+Each slider covers a different frequency band, from lowest (at the top) to highest (at the bottom).
+When the slider knob for a band is set to +0 dB, that frequency band at its maximum volume.
+Moving the slider knob left will make the frequency band progressively more quiet.
+Choosing **White Noise** will set all the sliders to the maximum (+0 dB) position.
+Choosing **Silence** will set all the sliders to the minimum (-48 dB) position.
+
+> **Note:** The effect of each slider overlaps the other sliders around it.
+> For example, setting one slider to -48 dB and the next to +0 dB will make the +0 dB band much quieter than setting both to 0 dB.
+> To counter this effect, arrange the sliders to form gentle curves that only change a little from band to band.
 
 ### What colour should I use?
 The colour that works best for a given listener or trigger may vary, so you should experiment.
