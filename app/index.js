@@ -24,10 +24,8 @@ const NOISE_TYPES = [
 
 /** The `NOISE_TYPES` index that stops sound instead of playing it. */
 const TYPE_SILENCE = 0;
-/** The `NOISE_TYPES` index of the custom audio option. */
+/** The `NOISE_TYPES` index of the custom audio option (requires extra filtering). */
 const TYPE_CUSTOM = NOISE_TYPES.length - 1;
-/** The `NOISE_TYPES` index of the base sound for the custom audio option. */
-const TYPE_CUSTOM_BASE_NOISE = 1;
 
 /** The Web Audio context; created on first use. */
 let audioCtx = null;
@@ -84,8 +82,7 @@ async function playAudio(i) {
         // but will be the head of the eq filter chain if using the custom option
         let dest = audioCtx.destination;
         if (i == TYPE_CUSTOM) {
-            // custom plays white noise, but applies a user-controlled equalizer
-            i = TYPE_CUSTOM_BASE_NOISE;
+            // custom applies a user-controlled EQ to (louder than normal) white noise
             createEqualizerFilters();
             dest = eqFilters[eqFilters.length - 1];
             document.querySelector("custom-eq").classList.add("open");
@@ -164,7 +161,7 @@ audioControlEl.firstChild.innerText = "";
 
 // extra setup for the "Custom" option and its filter controls
 const EQ_NUM_BANDS = 10;
-const EQ_Q = Math.SQRT2;
+const EQ_Q = Math.SQRT2 * 2;
 const EQ_MIN_DB = -48;
 const EQ_MAX_DB = 0;
 const EQ_BANDS = new Array(EQ_NUM_BANDS).fill(0).map((e, i) => 31.25 * 2**i);
@@ -199,6 +196,36 @@ function createEqualizerFilters() {
     eqFilters[EQ_NUM_BANDS-1].type = "highshelf";
 }
 
+/** Formats the frequency label of an equalizer band. */
+function formatBandFrequency(hzVal) {
+    return hzVal >= 1000 ? `${Math.round(hzVal/1000)} KHz` : `${hzVal} Hz`;
+}
+
+/** Formats the dB adjustment readout of an equalizer band. */
+function formatBandValue(dbVal) {
+    return `${dbVal >= 0 ? "+" : ""}${dbVal} dB`;
+}
+
+/** Gets dB setting for band `i` from local storage if available (else returns 0). */
+function recallBandValue(i) {
+    let val = null;
+    if (window.localStorage) {
+        val = localStorage.getItem(`custom${i}`);
+    }
+    val = Number.parseInt(val);
+    if (val !== val || val < EQ_MIN_DB || val > EQ_MAX_DB ) {
+        val = 0;
+    }
+    return val;
+}
+
+/** Stores setting for band `i` in local storage if available. */
+function storeBandValue(i, dB) {
+    if (window.localStorage) {
+        localStorage.setItem(`custom${i}`, String(dB));
+    }
+}
+
 /**
  * Removes the custom audio filters from the audio graph.
  * Safe to call even if the filters have not currently in use.
@@ -209,23 +236,15 @@ function destroyEqualizerFilters() {
     eqFilters = null;
 }
 
-/** Formats the dB adjustment readout of an equalizer band. */
-function formatBandValue(dbVal) {
-    return `${dbVal >= 0 ? "+" : ""}${dbVal} dB`;
-}
-
 // create the equalizer controls
 const eqControls = document.querySelector("custom-eq");
 for (let i=0; i<EQ_NUM_BANDS; ++i) {
     const id = `custom${i}`;
-    let val = Number(localStorage.getItem(id) || 0);
-    if (val !== val || val < EQ_MIN_DB || val > EQ_MAX_DB ) {
-        val = 0;
-    }
+    let val = recallBandValue(i);
     eqVals[i] = val;
 
     const bandLabel = document.createElement("label");
-    bandLabel.innerText = `${EQ_BANDS[i]} Hz`;
+    bandLabel.innerText = formatBandFrequency(EQ_BANDS[i]);
     bandLabel.setAttribute("for", id);
 
     const valueLabel = document.createElement("span");
@@ -241,7 +260,7 @@ for (let i=0; i<EQ_NUM_BANDS; ++i) {
     slider.addEventListener("input", ev => {
         const val = Number(slider.value);
         eqVals[i] = val;
-        localStorage.setItem(id, String(val));
+        storeBandValue(i, val);
         if (eqFilters != null) {
             eqFilters[i].gain.value = val;
         }
@@ -282,18 +301,16 @@ function addEqFeature(label, fn) {
     eqControls.appendChild(eqCtrl);
 }
 
-addEqFeature("White Noise", (dB, i) => 0);
-addEqFeature("Silence", (dB, i) => EQ_MIN_DB);
+addEqFeature("Loudest", (dB, i) => 0);
+addEqFeature("Quietest", (dB, i) => EQ_MIN_DB);
 
 
 // Web app support
-
-const installBtn = document.querySelector("install-button");
 let webAppInstaller = null;
 
 /**
  * Install as PWA if possible, or report an error otherwise.
- */
+*/
 function installWebApp() {
     if (webAppInstaller == null) {
         alert("Can’t install app with this browser:\nEither Web apps are not supported, or it is already installed.");
@@ -301,6 +318,8 @@ function installWebApp() {
         webAppInstaller.prompt();
     }
 }
+
+const installBtn = document.querySelector("install-button");
 installBtn.addEventListener("click", installWebApp);
 
 // make install icon visible when app installation is supported
