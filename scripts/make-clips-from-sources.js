@@ -3,7 +3,7 @@ const path = require("path");
 const { spawnSync } = require("child_process");
 const { exit } = require("process");
 
-const DIR_SOURCE_CLIPS = __dirname;
+const DIR_SOURCE_CLIPS = path.resolve(__dirname, "..", "clip-sources");
 
 function timestamp(path) {
     return fs.existsSync(path) ? fs.statSync(path).mtimeMs : 0;
@@ -11,7 +11,7 @@ function timestamp(path) {
 
 function outpath(wavfile, ext) {
     const name = path.parse(wavfile).name;
-    return path.join(DIR_SOURCE_CLIPS, "..", "app", "clips", `${name}.${ext}`);
+    return path.resolve(DIR_SOURCE_CLIPS, "..", "app", "clips", `${name}.${ext}`);
 }
 
 function ffmpeg(infile, outext) {
