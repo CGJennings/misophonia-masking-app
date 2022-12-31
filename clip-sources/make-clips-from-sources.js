@@ -23,8 +23,8 @@ function ffmpeg(infile, outext) {
 
     const extraArgs = {
         flac: ["-af", "aformat=s16:44100"],
-        mp3: ["-c:a", "libmp3lame", "-q:a", "0", "-abr", "1"],
-        ogg: ["-c:a", "libopus"],
+        mp3: ["-c:a", "libmp3lame", "-q:a", "0"],
+        ogg: ["-c:a", "libopus", "-b:a", "100000"],
     }[outext] || [];
 
     const args = ["-v", "error", "-i", infile, ...extraArgs, "-map_metadata", "-1", "-y", outfile];
