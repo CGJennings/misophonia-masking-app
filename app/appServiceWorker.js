@@ -1,4 +1,4 @@
-const CACHE_VER = 100.04;
+const CACHE_VER = 100.05;
 const CACHE_PREFIX = "misophonia-mask-v";
 const CACHE_NAME = CACHE_PREFIX + CACHE_VER;
 
@@ -25,6 +25,7 @@ const ASSETS = [
   "green",
   "blue",
   "purple",
+  "custom",
 ].forEach((base) => CLIP_FORMATS.forEach((ext) => ASSETS.push(`./clips/${base}.${ext}`)));
 
 
