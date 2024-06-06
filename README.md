@@ -92,8 +92,7 @@ Choosing **Quietest** will set all the sliders to the minimum (-48 dB) position.
 ### What colour should I use?
 The colour that works best for a given listener, trigger, or environment may vary, so you should experiment.
 The best colour is the one that is effective at the lowest volume.
-Having made that clear, it can be daunting to have too many choices when you are not familiar with the 
-Here are a few pointers to help you get started:
+That said, here are a few pointers based on what has worked well for other people:
 
 1. Good places to start are often red (3), pink (4), green (5), or grey (2).
 All of these are often used for relaxation.
